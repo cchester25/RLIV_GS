@@ -1,0 +1,97 @@
+sensors:
+  lidar:
+    enable: true # Set to true if lidar is enabled
+    type: 0 # 0: Livox-aiva, 1: Ouster, 2: Velodyne
+    lines: 6 # Number of lines for the lidar
+    topic: "/livox/lidar" # Topic for the lidar
+    frequency: 10.0 # Frequency of the lidar in Hz
+    blind: 0.8 # Blind spot distance in meters
+    min_intensity: 0.0 # Minimum intensity value for the lidar
+    max_intensity: 255.0 # Maximum intensity value for the lidar
+    ranging_noise : 0.02 # Ranging noise in meters
+    bearing_noise: 0.05 # Bearing noise in degrees
+    extrinsics:
+      lidar_camera_translation: [0.0004384, 0.06,-0.03] # Translation from lidar to camera in meters
+      lidar_camera_rotation: [0.00610193,-0.999863,-0.0154172,
+                            -0.00615449,0.0153796,-0.999863,
+                            0.999962,0.00619598,-0.0060598]  # Rotation from lidar to camera as a 3x3 matrix
+      # lidar_camera_translation: [0.00549469, 0.0712101, 0.0322054] # Translation from lidar to camera in meters
+      # lidar_camera_rotation: [-0.0036250, -0.9998907, -0.0143360,
+      #                         0.0075568,  0.0143083, -0.9998690,
+      #                         0.9999649, -0.0037329,  0.0075041]  # Rotation from lidar to camera as a 3x3 matrix
+
+      lidar_camera_time_offset: 0.1 # Time offset from lidar to camera in seconds
+      lidar_imu_translation: [0.04165, 0.02326, -0.0284] # Translation from lidar to IMU in meters
+      lidar_imu_rotation: [1, 0, 0, 0, 1, 0, 0, 0, 1] # Rotation from lidar to IMU as a 3x3 matrix
+      lidar_imu_time_offset: 0.0 # Time offset from lidar to IMU in seconds
+
+  camera:
+    enable: true # Set to true if camera is enabled
+    topic: "/left_camera/image" # Topic for the camera
+    frequency: 10.0 # Frequency of the camera in Hz
+    exposure_time_init : 0.0 # Initial exposure time in seconds
+    inv_exposure_time_cov: 0.1 # Inverse exposure time error in seconds
+    photometric_noise: 100.0 # 1000 The covariance of photometric errors per pixel
+
+  imu:
+    enable: true # Set to true if imu is enabled
+    type: 0 # 0: 6-axis, 1: 9-axis
+    topic: "/livox/imu" # Topic for the IMU 
+    frequency: 200.0 # Frequency of the IMU in Hz
+    acc_cov: 0.5 # Accelerometer noise covariance 
+    gyro_cov: 0.3 # Gyroscope noise covariance
+    acc_bias_cov: 0.0001 # Accelerometer bias noise covariance
+    gyro_bias_cov: 0.0001 # Gyroscope bias noise covariance
+    gravity_constant: 9.81 # Gravity constant in m/s^2
+
+  gnss:
+    enable: false # Set to true if GNSS is enabled
+    type: 0 # 0: RTK-Single Antenna, 1: RTK-Dual Antenna
+    topic: "/gnss" # Topic for the GNSS 
+    frequency: 10.0 # Frequency of the GNSS in Hz
+    position_cov: 0.1 # Position noise covariance
+    velocity_cov: 0.01 # Velocity noise covariance
+    attitude_cov: 0.01 # Attitude noise covariance
+    extrinsics:
+      gnss_imu_translation: [0.0, 0.0, 0.0] # Translation from GNSS to IMU in meters
+      gnss_imu_rotation: [1, 0, 0, 0, 1, 0, 0, 0, 1] # Rotation from GNSS to IMU as a 3x3 matrix
+      gnss_imu_time_offset: 0.0 # Time offset from GNSS to IMU in seconds
+
+frontend:
+    max_iterations: 5 # Maximum number of iterations for the state estimation
+    
+    lio:
+      frame_voxel_size: 0.1 # Voxel size in meters for one frame 
+      map_voxel_size: 0.5 # Voxel map size in meters
+      plane_threshold: 0.0025 # Plane threshold in meters
+      octree_max_depth: 2 # Maximum depth of the octree
+      node_max_points: 50 # Maximum number of points in a octree node
+      node_min_points: 5 # Minimum number of points in a octree node
+      sigma_num: 3.0 # Sigma number for outlier rejection
+      capacity: 1000000 # Capacity of the octree
+
+    vio:
+      normal_enable: true # Enable normal estimation
+      raycast_enable: false # Raycast enable
+      grid_size: 5 # Grid size for raycast
+      patch_size: 8 # Image patch size in pixels
+      pyrimid_level: 4 # Pyramid level for image patch
+      outlier_threshold: 1000.0 # Total photometric error threshold for outlier rejection
+
+    relocalization:
+      enable: false # Enable relocalization
+
+    publish:
+      dense_map_enable: true # Enable dense map publishing
+      effect_point_enable: false  # Enable effective point publishing
+      plane_enable: false # Enable plane publishing
+      scan_num: 1 # Number of scans to publish
+
+    output:
+      colmap_save: false # Save point cloud to colmap
+      pcd_save: false # Save point cloud to pcd
+      pcd_filter_size: 0.15 # Point cloud filter in meters
+      save_num: -1 # Number of point clouds to save, -1 : all frames will be saved in ONE pcd file
+
+
+
